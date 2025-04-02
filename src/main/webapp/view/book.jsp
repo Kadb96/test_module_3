@@ -95,6 +95,12 @@
     <header class="mb-5 text-center">
         <h1 class="display-4">Danh sách sách</h1>
     </header>
+    <form action="/callCards" method="get">
+        <input type="hidden" name="action" value="showAll">
+        <button class="btn btn-primary btn-sm" type="submit">
+            Thống kê sách đang cho mượn
+        </button>
+    </form>
     <div class="table-responsive">
         <table class="table table-hover align-middle">
             <thead class="table-light">

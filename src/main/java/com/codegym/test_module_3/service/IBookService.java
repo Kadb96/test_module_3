@@ -7,5 +7,6 @@ import java.util.List;
 public interface IBookService {
     List<Book> showAll();
     Book show(String id);
-    boolean borrowBook(String id, int book_quantity);
+    boolean borrowBook(String id);
+    boolean returnBook(String id);
 }

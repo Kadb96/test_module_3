@@ -1,20 +1,37 @@
-package com.codegym.test_module_3.model;
+package com.codegym.test_module_3.dto;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class CallCard {
+public class CallCardDto {
     private String callCardId;
     private String bookId;
     private String studentId;
     private boolean isBorrowing;
     private LocalDate borrowedAt;
     private LocalDate returnedAt;
+    private String bookName;
+    private String studentName;
+    private String studentClass;
+    private String bookAuthor;
 
-    public CallCard() {
+    public CallCardDto(String callCardId, String bookId, String studentId, boolean isBorrowing, LocalDate borrowedAt, LocalDate returnedAt, String bookName, String studentName, String studentClass, String bookAuthor) {
+        this.callCardId = callCardId;
+        this.bookId = bookId;
+        this.studentId = studentId;
+        this.isBorrowing = isBorrowing;
+        this.borrowedAt = borrowedAt;
+        this.returnedAt = returnedAt;
+        this.bookName = bookName;
+        this.studentName = studentName;
+        this.studentClass = studentClass;
+        this.bookAuthor = bookAuthor;
     }
 
-    public CallCard(String callCardId, String bookId, String studentId, boolean isBorrowing, LocalDate borrowedAt, LocalDate returnedAt) {
+    public CallCardDto() {
+    }
+
+    public CallCardDto(String callCardId, String bookId, String studentId, boolean isBorrowing, LocalDate borrowedAt, LocalDate returnedAt) {
         this.callCardId = callCardId;
         this.bookId = bookId;
         this.studentId = studentId;
@@ -23,7 +40,7 @@ public class CallCard {
         this.returnedAt = returnedAt;
     }
 
-    public CallCard(String callCardId, String bookId, String studentId, LocalDate borrowedAt, LocalDate returnedAt) {
+    public CallCardDto(String callCardId, String bookId, String studentId, LocalDate borrowedAt, LocalDate returnedAt) {
         this.callCardId = callCardId;
         this.bookId = bookId;
         this.studentId = studentId;
@@ -79,6 +96,38 @@ public class CallCard {
         this.returnedAt = returnedAt;
     }
 
+    public String getBookName() {
+        return bookName;
+    }
+
+    public void setBookName(String bookName) {
+        this.bookName = bookName;
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
+
+    public String getStudentClass() {
+        return studentClass;
+    }
+
+    public void setStudentClass(String studentClass) {
+        this.studentClass = studentClass;
+    }
+
+    public String getBookAuthor() {
+        return bookAuthor;
+    }
+
+    public void setBookAuthor(String bookAuthor) {
+        this.bookAuthor = bookAuthor;
+    }
+
     public String getBorrowedAtStringSql() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String borrowedAtString = borrowedAt.format(formatter);
@@ -96,7 +145,6 @@ public class CallCard {
         String returnedAtString = returnedAt.format(formatter);
         return returnedAtString;
     }
-
     public String getReturnedAtString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String returnedAtString = returnedAt.format(formatter);

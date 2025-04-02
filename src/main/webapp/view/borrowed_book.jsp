@@ -104,60 +104,61 @@
 <body>
 <div class="container py-5">
     <header class="mb-5 text-center">
-        <h1 class="display-4">Danh sách sách</h1>
+        <h1 class="display-4">Thống kê sách đang cho mượn</h1>
     </header>
     <div class="row mb-4">
-        <form action="/books" method="post" class="row mb-4 col-md-10">
-            <input type="hidden" name="action" value="showBook">
-            <div class="col-md-6">
-                <input type="text" class="form-control" placeholder="Search by product name" id="searchInput"
-                       name="productName">
-            </div>
-            <div class="col-md-3">
-                <select class="form-select" id="typeFilter" name="productTypeId">
-                    <option value="0">All Product Types</option>
-                    <c:forEach items="${productTypes}" var="productType">
-                        <option value="${productType.getId()}">${productType.getProductTypeName()}</option>
-                    </c:forEach>
-                </select>
-            </div>
-            <div class="col-md-1">
-                <button class="btn btn-light w-100" type="submit">
-                    Search
-                </button>
+        <form action="/callCards" method="post">
+            <div class="row mb-4">
+                <input type="hidden" name="action" value="search">
+                <div class="col-md-2">
+                    <label class="form-label">Tên sách</label>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="bookName">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Tên học sinh</label>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="studentName">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-light w-100" type="submit">
+                        Tìm kiếm
+                    </button>
+                </div>
             </div>
         </form>
-        <div class="col-md-2">
-            <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addProductModal"> + Add New
-                Product
-            </button>
-        </div>
     </div>
 
     <div class="table-responsive">
         <table class="table table-hover align-middle">
             <thead class="table-light">
             <tr>
-                <th>Product Code</th>
-                <th>Product Name</th>
-                <th>Calculation Unit</th>
-                <th>Product Price</th>
-                <th>Product Type</th>
-                <th>Actions</th>
+                <th>Mã mượn sách</th>
+                <th>Tên sách</th>
+                <th>Tác giả</th>
+                <th>Tên học sinh</th>
+                <th>Lớp</th>
+                <th>Ngày mượn</th>
+                <th>Ngày trả</th>
+                <th>Trả sách</th>
             </tr>
             </thead>
             <tbody>
-            <c:forEach items="${products}" var="product">
+            <c:forEach items="${callCards}" var="callCard">
                 <tr>
-                    <td>${product.getProductCode()}</td>
-                    <td>${product.getProductName()}</td>
-                    <td>${product.getCalculationUnit()}</td>
-                    <td>${product.getProductPriceToString()} vnd</td>
-                    <td>${product.getProductTypeName()}</td>
+                    <td>${callCard.getCallCardId()}</td>
+                    <td>${callCard.getBookName()}</td>
+                    <td>${callCard.getBookAuthor()}</td>
+                    <td>${callCard.getStudentName()}</td>
+                    <td>${callCard.getStudentClass()}</td>
+                    <td>${callCard.getBorrowedAtString()}</td>
+                    <td>${callCard.getReturnedAtString()}</td>
                     <td>
-                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                onclick="getDeleteProductInfo(`${product.getId()}`, `${product.getProductName()}`)">
-                            Delete
+                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#returnModal"
+                                onclick="getReturnInfo(`${callCard.getStudentName()}`, `${callCard.getBookName()}`, `${callCard.getCallCardId()}`, `${callCard.getBookId()}`)">
+                            Trả sách
                         </button>
                     </td>
                 </tr>
@@ -166,75 +167,25 @@
         </table>
     </div>
 
-    <!-- Add Product Modal -->
-    <div class="modal fade" id="addProductModal" tabindex="-1">
+    <!-- Return Confirmation Modal -->
+    <div class="modal fade" id="returnModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add New Product</h5>
+                    <h5 class="modal-title">Trả sách</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addProductForm" action="/products" method="post">
-                        <input type="hidden" name="action" value="addProduct">
-                        <div class="mb-3">
-                            <label class="form-label">Product Code</label>
-                            <input type="text" class="form-control" name="productCode" required
-                                   pattern="^MHH-[A-Z0-9]{5}$" placeholder="MHH-XXXXX">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Product Name</label>
-                            <input type="text" class="form-control" name="productName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Calculation Unit</label>
-                            <select name="calculationUnit" class="form-select" required>
-                                    <option>Kg</option>
-                                    <option>Túi</option>
-                                    <option>Bó</option>
-                                    <option>Chiec</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Product Price</label>
-                            <input type="number" class="form-control" name="productPrice" required min="1000" step="1">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Product Type</label>
-                            <select name="productTypeId" class="form-select" required>
-                                <c:forEach items="${productTypes}" var="productType">
-                                    <option value="${productType.getId()}">${productType.getProductTypeName()}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" form="addProductForm" class="btn btn-primary">Add Product</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirm Delete</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    Are you sure you want to delete product <span id="deleteProductName"></span>?
+                    Học sinh <span id="returnStudentName"></span> thực hiện trả sách <span id="returnBookName"></span>
                 </div>
 
                 <div class="modal-footer">
-                    <form action="/products" method="post">
-                        <input type="hidden" name="action" value="deleteProduct">
-                        <input type="hidden" name="id" id="deleteId">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                    <form action="/callCards" method="post">
+                        <input type="hidden" name="action" value="returnBook">
+                        <input type="hidden" name="callCardId" id="returnCallCardId">
+                        <input type="hidden" name="bookId" id="returnBookId">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+                        <button type="submit" class="btn btn-danger">Trả sách</button>
                     </form>
                 </div>
             </div>
@@ -242,9 +193,11 @@
     </div>
 </div>
 <script>
-    function getDeleteProductInfo(deleteId, deleteProductName) {
-        document.getElementById("deleteProductName").innerText = deleteProductName;
-        document.getElementById("deleteId").value = deleteId;
+    function getReturnInfo(returnStudentName, returnBookName, returnCallCardId, returnBookId) {
+        document.getElementById("returnBookName").innerText = returnBookName;
+        document.getElementById("returnStudentName").innerText = returnStudentName;
+        document.getElementById("returnCallCardId").value = returnCallCardId;
+        document.getElementById("returnBookId").value = returnBookId;
     }
 </script>
 </body>

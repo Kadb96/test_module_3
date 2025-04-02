@@ -20,7 +20,12 @@ public class BookService implements IBookService {
     }
 
     @Override
-    public boolean borrowBook(String id, int book_quantity) {
-        return bookRepository.borrow(id, book_quantity);
+    public boolean borrowBook(String id) {
+        return bookRepository.borrowBook(id);
+    }
+
+    @Override
+    public boolean returnBook(String id) {
+        return bookRepository.returnBook(id);
     }
 }

@@ -13,7 +13,8 @@ import java.util.List;
 public class BookRepository implements IBookRepository {
     private final String SHOW_ALL = "SELECT * FROM book";
     private final String SHOW_BY_ID = "SELECT * FROM book WHERE book_id = ?";
-    private final String BORROW_BOOK = "UPDATE book SET book_quantity = ? WHERE book_id = ?";
+    private final String BORROW_BOOK = "UPDATE book SET book_quantity = book_quantity - 1 WHERE book_id = ?";
+    private final String RETURN_BOOK = "UPDATE book SET book_quantity = book_quantity + 1 WHERE book_id = ?";
 
     @Override
     public List<Book> showAll() {
@@ -58,16 +59,32 @@ public class BookRepository implements IBookRepository {
     }
 
     @Override
-    public boolean borrow(String id, int quantity) {
+    public boolean borrowBook(String id) {
         Connection connection = BaseRepository.getConnectDB();
         try {
             PreparedStatement statement = connection.prepareStatement(BORROW_BOOK);
-            statement.setInt(1, quantity -1);
-            statement.setString(2, id);
-            statement.execute();
-            return true;
+            statement.setString(1, id);
+            if (statement.executeUpdate() == 1) {
+                return true;
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return false;
+    }
+
+    @Override
+    public boolean returnBook(String id) {
+        Connection connection = BaseRepository.getConnectDB();
+        try {
+            PreparedStatement statement = connection.prepareStatement(RETURN_BOOK);
+            statement.setString(1, id);
+            if (statement.executeUpdate() == 1) {
+                return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
     }
 }
